@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function Weather({ setLocation }) {
+function Weather({ setLocation, initialLocation }) {
   const [city, setCity] = useState("");
-  const [weatherData, setWeatherData] = useState(null); 
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(null); 
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const API_KEY = "9f62ada4458337c8090427bcadd88a95";
 
-  const fetchWeather = async () => {
-    if (!city) return; 
+  const fetchWeatherByCity = async () => {
+    if (!city) return;
     try {
       setLoading(true);
       setError(null);
@@ -34,13 +34,40 @@ function Weather({ setLocation }) {
     }
   };
 
+  const fetchWeatherByCoordinates = async ({ lat, lng }) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch weather data");
+      }
+
+      const data = await response.json();
+      setWeatherData(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (initialLocation) {
+      fetchWeatherByCoordinates(initialLocation);
+    }
+  }, [initialLocation]);
+
   const handleSubmit = (e) => {
-    e.preventDefault(); 
-    fetchWeather(); 
+    e.preventDefault();
+    fetchWeatherByCity();
   };
 
   const handleCityChange = (e) => {
-    setCity(e.target.value); 
+    setCity(e.target.value);
   };
 
   return (
