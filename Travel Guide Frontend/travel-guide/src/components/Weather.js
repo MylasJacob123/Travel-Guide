@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-function Weather() {
-  const [location, setLocation] = useState("");
+function Weather({ setLocation }) {
+  const [city, setCity] = useState("");
   const [weatherData, setWeatherData] = useState(null); 
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null); 
@@ -9,13 +9,13 @@ function Weather() {
   const API_KEY = "9f62ada4458337c8090427bcadd88a95";
 
   const fetchWeather = async () => {
-    if (!location) return; 
+    if (!city) return; 
     try {
       setLoading(true);
       setError(null);
 
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch weather data");
@@ -23,6 +23,10 @@ function Weather() {
 
       const data = await response.json();
       setWeatherData(data);
+
+      if (data.coord) {
+        setLocation({ lat: data.coord.lat, lng: data.coord.lon });
+      }
     } catch (error) {
       setError(error.message);
     } finally {
@@ -35,8 +39,8 @@ function Weather() {
     fetchWeather(); 
   };
 
-  const handleLocationChange = (e) => {
-    setLocation(e.target.value); 
+  const handleCityChange = (e) => {
+    setCity(e.target.value); 
   };
 
   return (
@@ -45,8 +49,8 @@ function Weather() {
         <div className="align">
           <input
             type="text"
-            value={location}
-            onChange={handleLocationChange}
+            value={city}
+            onChange={handleCityChange}
             placeholder="Enter City"
             required
           />
