@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 function Weather({ setLocation, initialLocation }) {
   const [city, setCity] = useState("");
   const [weatherData, setWeatherData] = useState(null);
+  const [forecast, setForecast] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -26,6 +27,7 @@ function Weather({ setLocation, initialLocation }) {
 
       if (data.coord) {
         setLocation({ lat: data.coord.lat, lng: data.coord.lon });
+        fetchForecastByCoordinates(data.coord.lat, data.coord.lon); 
       }
     } catch (error) {
       setError(error.message);
@@ -48,6 +50,7 @@ function Weather({ setLocation, initialLocation }) {
 
       const data = await response.json();
       setWeatherData(data);
+      fetchForecastByCoordinates(lat, lng); 
     } catch (error) {
       setError(error.message);
     } finally {
@@ -55,11 +58,21 @@ function Weather({ setLocation, initialLocation }) {
     }
   };
 
-  useEffect(() => {
-    if (initialLocation) {
-      fetchWeatherByCoordinates(initialLocation);
+  const fetchForecastByCoordinates = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch forecast data");
+      }
+
+      const data = await response.json();
+      setForecast(data.list);
+    } catch (error) {
+      setError(error.message);
     }
-  }, [initialLocation]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,6 +82,107 @@ function Weather({ setLocation, initialLocation }) {
   const handleCityChange = (e) => {
     setCity(e.target.value);
   };
+
+  const convertTemperature = (temp) => {
+    return temp;
+  };
+
+  const getWeatherImage = (description) => {
+    if (!description) {
+      return {
+        url: "https://img.icons8.com/?size=100&id=HvsrTtUGylxy&format=png&color=000000",
+        alt: "Default Weather",
+        explanation: "Weather image not available yet.",
+      };
+    }
+
+    switch (description.toLowerCase()) {
+      case "clear sky":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/c01d.png",
+          alt: "Clear Skies",
+          explanation: "The sky is clear with no clouds.",
+        };
+      case "few clouds":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/c02d.png",
+          alt: "Few Clouds",
+          explanation: "There are a few clouds in the sky.",
+        };
+      case "scattered clouds":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/c02d.png",
+          alt: "Scattered Clouds",
+          explanation: "There are scattered clouds in the sky.",
+        };
+      case "broken clouds":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/c03d.png",
+          alt: "Broken Clouds",
+          explanation: "The sky is mostly covered with clouds.",
+        };
+      case "overcast clouds":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/c04d.png",
+          alt: "Overcast Clouds",
+          explanation: "The sky is completely covered with clouds.",
+        };
+      case "shower rain":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/r01d.png",
+          alt: "Shower Rain",
+          explanation: "There is light rain.",
+        };
+      case "rain":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/r01d.png",
+          alt: "Rain",
+          explanation: "It is raining with varying intensity.",
+        };
+      case "light rain":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/r01d.png",
+          alt: "Light Rain",
+          explanation: "There is light rain.",
+        };
+      case "thunderstorm":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/t01d.png",
+          alt: "Thunderstorm",
+          explanation: "There are thunderstorms in the area.",
+        };
+      case "snow":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/s01d.png",
+          alt: "Snow",
+          explanation: "It is snowing.",
+        };
+      case "mist":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/a01d.png",
+          alt: "Mist",
+          explanation: "It is misty, prepare for reduced visibility.",
+        };
+      case "sunny":
+        return {
+          url: "https://www.weatherbit.io/static/img/icons/c01d.png",
+          alt: "Sunny",
+          explanation: "The weather is sunny and clear.",
+        };
+      default:
+        return {
+          url: "https://img.icons8.com/?size=100&id=HvsrTtUGylxy&format=png&color=000000",
+          alt: "Default Weather",
+          explanation: "Weather image not available yet.",
+        };
+    }
+  };
+
+  useEffect(() => {
+    if (initialLocation) {
+      fetchWeatherByCoordinates(initialLocation);
+    }
+  }, [initialLocation]);
 
   return (
     <div>
@@ -95,6 +209,84 @@ function Weather({ setLocation, initialLocation }) {
           <p>Weather: {weatherData.weather[0].description}</p>
           <p>Humidity: {weatherData.main.humidity}%</p>
           <p>Wind Speed: {weatherData.wind.speed} m/s</p>
+          <div>
+            <img
+              src={getWeatherImage(weatherData.weather[0].description).url}
+              alt={weatherData.weather[0].description}
+            />
+            <p>
+              {getWeatherImage(weatherData.weather[0].description).explanation}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {forecast.length > 0 && (
+        <div
+          style={{
+            padding: "20px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            marginTop: "20px",
+            backgroundColor: "#f9f9f9",
+          }}
+        >
+          <h2>6-Day Forecast:</h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+            {Array.from(
+              new Set(
+                forecast.map((item) =>
+                  new Date(item.dt * 1000).toLocaleDateString()
+                )
+              )
+            ).map((date, index) => {
+              const dayForecast = forecast.find(
+                (item) => new Date(item.dt * 1000).toLocaleDateString() === date
+              );
+
+              return (
+                <div
+                  key={index}
+                  style={{
+                    padding: "10px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    width: "180px",
+                    textAlign: "center",
+                    backgroundColor: "#fff",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <h4>{date}</h4>
+                  <div className="weather-image">
+                    <img
+                      src={
+                        getWeatherImage(dayForecast.weather[0].description).url
+                      }
+                      alt={dayForecast.weather[0].description}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        marginBottom: "10px",
+                      }}
+                    />
+                  </div>
+                  <p>
+                    Temp: {convertTemperature(dayForecast.main.temp).toFixed(1)}
+                    °C
+                  </p>
+                  <p>Humidity: {dayForecast.main.humidity}%</p>
+                  <p>{dayForecast.weather[0].description}</p>
+                  <p>
+                    {
+                      getWeatherImage(dayForecast.weather[0].description)
+                        .explanation
+                    }
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
