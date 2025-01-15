@@ -5,6 +5,7 @@ import Weather from "./Weather";
 
 function MainDisplay() {
   const [location, setLocation] = useState(null);
+  const [attractions, setAttractions] = useState([]);
 
   useEffect(() => {
     if (!location) {
@@ -25,8 +26,8 @@ function MainDisplay() {
   return (
     <div>
       <h1>Main Display</h1>
-      <Map location={location} />
-      <Weather setLocation={setLocation} initialLocation={location} />
+      <Map location={location} attractions={attractions} />
+      <Weather setLocation={setLocation} initialLocation={location} setAttractions={setAttractions} />
     </div>
   );
 }

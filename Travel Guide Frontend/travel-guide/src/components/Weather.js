@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from "react";
 
-function Weather({ setLocation, initialLocation }) {
+function Weather({ setLocation, initialLocation, setAttractions }) {
   const [city, setCity] = useState("");
   const [weatherData, setWeatherData] = useState(null);
-  const [forecast, setForecast] = useState([]); 
+  const [forecast, setForecast] = useState([]);
+  const [attractions, setAttractionsData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const API_KEY = "9f62ada4458337c8090427bcadd88a95";
+  const GOOGLE_API_KEY = "AIzaSyB481IL4ZxlW9g8HrpFGOJ1pdJafQj1YjQ";
+
+  const fetchAttractions = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=tourist_attraction&key=${GOOGLE_API_KEY}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch attractions");
+      }
+
+      const data = await response.json();
+      setAttractionsData(data.results);
+      setAttractions(data.results);
+    } catch (error) {
+      setError(error.message);
+      console.log(error.message);
+    }
+  };
 
   const fetchWeatherByCity = async () => {
     if (!city) return;
@@ -27,6 +48,7 @@ function Weather({ setLocation, initialLocation }) {
 
       if (data.coord) {
         setLocation({ lat: data.coord.lat, lng: data.coord.lon });
+        fetchAttractions(data.coord.lat, data.coord.lon); 
         fetchForecastByCoordinates(data.coord.lat, data.coord.lon); 
       }
     } catch (error) {
@@ -50,7 +72,8 @@ function Weather({ setLocation, initialLocation }) {
 
       const data = await response.json();
       setWeatherData(data);
-      fetchForecastByCoordinates(lat, lng); 
+      fetchForecastByCoordinates(lat, lng);
+      fetchAttractions(lat, lng); 
     } catch (error) {
       setError(error.message);
     } finally {
@@ -254,38 +277,54 @@ function Weather({ setLocation, initialLocation }) {
                     width: "180px",
                     textAlign: "center",
                     backgroundColor: "#fff",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                   }}
                 >
-                  <h4>{date}</h4>
+                  <h3>{date}</h3>
                   <div className="weather-image">
                     <img
                       src={
                         getWeatherImage(dayForecast.weather[0].description).url
                       }
                       alt={dayForecast.weather[0].description}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginBottom: "10px",
-                      }}
                     />
                   </div>
-                  <p>
-                    Temp: {convertTemperature(dayForecast.main.temp).toFixed(1)}
-                    °C
-                  </p>
-                  <p>Humidity: {dayForecast.main.humidity}%</p>
-                  <p>{dayForecast.weather[0].description}</p>
-                  <p>
-                    {
-                      getWeatherImage(dayForecast.weather[0].description)
-                        .explanation
-                    }
-                  </p>
+                  <p>{dayForecast?.weather[0].description}</p>
+                  <p>{dayForecast?.main.temp}°C</p>
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {attractions.length > 0 && (
+        <div style={{ marginTop: "20px" }}>
+          <h2>Popular Attractions</h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "20px",
+              justifyContent: "center",
+            }}
+          >
+            {attractions.map((attraction, index) => (
+              <div
+                key={index}
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  width: "200px",
+                  backgroundColor: "#f9f9f9",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <h3>{attraction.name}</h3>
+                <p>{attraction.vicinity}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}
