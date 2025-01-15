@@ -25,7 +25,6 @@ function MainDisplay() {
 
   return (
     <div>
-      <h1>Main Display</h1>
       <Map location={location} attractions={attractions} />
       <Weather setLocation={setLocation} initialLocation={location} setAttractions={setAttractions} />
     </div>
