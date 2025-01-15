@@ -5,7 +5,7 @@ import "./Navigation.css";
 function Navigation() {
   return (
     <nav>
-      <div>
+      <div className="NavigationPage">
         <ul>
           <li>
             <NavLink to="/">Home</NavLink>
