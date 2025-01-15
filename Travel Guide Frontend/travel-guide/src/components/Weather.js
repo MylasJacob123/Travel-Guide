@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./Weather.css";
 
 function Weather({ setLocation, initialLocation, setAttractions }) {
   const [city, setCity] = useState("");
@@ -208,9 +209,9 @@ function Weather({ setLocation, initialLocation, setAttractions }) {
   }, [initialLocation]);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="controls">
-        <div className="align">
+    <div className="weather-page-container">
+      <form onSubmit={handleSubmit} className="weather-page-controls">
+        <div className="weather-page-align">
           <input
             type="text"
             value={city}

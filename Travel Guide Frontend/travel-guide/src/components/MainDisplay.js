@@ -24,9 +24,17 @@ function MainDisplay() {
   }, [location]);
 
   return (
-    <div>
-      <Map location={location} attractions={attractions} />
-      <Weather setLocation={setLocation} initialLocation={location} setAttractions={setAttractions} />
+    <div className="main-display-container">
+      <div className="weather-container">
+        <Weather
+          setLocation={setLocation}
+          initialLocation={location}
+          setAttractions={setAttractions}
+        />
+      </div>
+      <div className="map-container">
+        <Map location={location} attractions={attractions} />
+      </div>
     </div>
   );
 }
