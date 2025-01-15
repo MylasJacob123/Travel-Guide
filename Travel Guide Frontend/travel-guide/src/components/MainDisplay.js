@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./MainDisplay.css";
 import Map from "./Map";
 import Weather from "./Weather";
 
 function MainDisplay() {
   const [location, setLocation] = useState(null);
+  const [attractions, setAttractions] = useState([]);
+
+  useEffect(() => {
+    if (!location) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting current location:", error);
+        }
+      );
+    }
+  }, [location]);
 
   return (
     <div>
-      <h1>Main Display</h1>
-      <Map location={location} />
-      <Weather setLocation={setLocation} />
+      <Map location={location} attractions={attractions} />
+      <Weather setLocation={setLocation} initialLocation={location} setAttractions={setAttractions} />
     </div>
   );
 }
