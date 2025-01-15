@@ -9,8 +9,8 @@ function Weather({ setLocation, initialLocation, setAttractions }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_KEY = process.env.REACT_APP_WEATHER_API;
-  const GOOGLE_API_KEY = process.env.REACT_APP_MAPS_PLATFORM_API_KEY;
+  const API_KEY = "9f62ada4458337c8090427bcadd88a95";
+  const GOOGLE_API_KEY = "AIzaSyB481IL4ZxlW9g8HrpFGOJ1pdJafQj1YjQ";
 
   const fetchAttractions = async (lat, lng) => {
     try {
@@ -105,10 +105,6 @@ function Weather({ setLocation, initialLocation, setAttractions }) {
 
   const handleCityChange = (e) => {
     setCity(e.target.value);
-  };
-
-  const convertTemperature = (temp) => {
-    return temp;
   };
 
   const getWeatherImage = (description) => {
