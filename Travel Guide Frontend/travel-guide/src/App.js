@@ -4,6 +4,9 @@ import HomePage from "./components/HomePage";
 import Favorite from "./components/Favorite";
 import MainDisplay from "./components/MainDisplay";
 import Navigation from "./components/Navigation";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Forgot from "./components/forgot";
 import "./App.css";
 
 function App() {
@@ -15,6 +18,9 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/favorites" element={<Favorite />} />
       <Route path="/display" element={<MainDisplay />} />
+      <Route path="login" element={<Login/>} />
+      <Route path="register" element={<Register/>} />
+      <Route path="forgot" element={<Forgot/>} />
       </Routes>
       </BrowserRouter>
     </div>
