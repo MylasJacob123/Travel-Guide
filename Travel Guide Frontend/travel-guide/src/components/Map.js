@@ -4,7 +4,7 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 const Map = ({ location, attractions }) => {
   const mapContainerStyle = {
     width: "100%",
-    height: "400px",
+    height: "100%",
   };
 
   const center = location
@@ -16,7 +16,7 @@ const Map = ({ location, attractions }) => {
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}
-        zoom={15}
+        zoom={12}
         options={{
           scrollwheel: true,
           draggable: true,
