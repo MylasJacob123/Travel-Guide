@@ -51,6 +51,14 @@
   text-align: center;
 }
 
+.Forgot-heard {
+  color: #0077b6;
+  font-size: 1.8rem;
+  font-weight: 400;
+  text-align: center;
+  width: 55%;
+}
+
 .LoginPage-error {
   color: #d00000;
   font-size: 0.9rem;
@@ -149,5 +157,28 @@
 }
 
 .LoginPage-button:active {
+  background-color: #0096c7;
+}
+
+.ForgotPage-button {
+  margin-top: 10px;
+  background-color: #0077b6;
+  border: none;
+  border-radius: 8px;
+  height: 45px;
+  width: 150px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.ForgotPage-button:hover {
+  background-color: #023e8a;
+  transform: scale(1.05);
+}
+
+.ForgotPage-button:active {
   background-color: #0096c7;
 }
