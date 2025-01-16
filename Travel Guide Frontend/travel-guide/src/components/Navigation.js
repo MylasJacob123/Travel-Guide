@@ -12,27 +12,35 @@ function Navigation() {
       </div>
       <ul>
         <li>
-          <NavLink 
-            to="/" 
+          <NavLink
+            to="/"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
             Home
           </NavLink>
         </li>
         <li>
-          <NavLink 
-            to="/display" 
+          <NavLink
+            to="/favorites"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
-            Start Your Journey
+            Profile
           </NavLink>
         </li>
         <li>
-          <NavLink 
-            to="/favorites" 
+          <NavLink
+            to="/login"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
-            Favorite
+            Login
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/register"
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+          >
+            Register
           </NavLink>
         </li>
       </ul>
