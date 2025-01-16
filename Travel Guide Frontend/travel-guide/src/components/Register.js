@@ -54,12 +54,39 @@ function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (validate()) {
-      alert("Registration successful!");
+      try {
+        const response = await fetch("https://travel-guide-backed.onrender.com/auth/createAccount", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: name,
+            lastName: lastName,
+            email: email,
+            password: password,
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          alert("Registration successful!");
+          navigate("/login"); 
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      } catch (error) {
+        console.error("Error registering user:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
+  
 
   const linkToLogin = () => {
     navigate("/login");

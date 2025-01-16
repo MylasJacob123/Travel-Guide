@@ -11,23 +11,47 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage("Please enter both email and password.");
       return;
     }
 
     setErrorMessage("");
-    alert("Login successful!");
+
+    try {
+      const response = await fetch("https://travel-guide-backed.onrender.com/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Login successful!");
+        navigate("/");
+      } else {
+        setErrorMessage(data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again later.");
+    }
   };
 
   const linkToRegister = () => {
-    navigate("/register")
-  }
+    navigate("/register");
+  };
 
   const linkToForgot = () => {
-    navigate("/forgot")
-  }
+    navigate("/forgot");
+  };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -67,13 +91,20 @@ function Login() {
               {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
             </span>
             <div className="Forgot-Container">
-              <span className="Link-Text" onClick={linkToForgot}>Forgot Password</span>
+              <span className="Link-Text" onClick={linkToForgot}>
+                Forgot Password
+              </span>
             </div>
           </div>
           <button className="LoginPage-button" onClick={handleLogin}>
             Login
           </button>
-          <span>Don't have an account? <span className="Link-Text" onClick={linkToRegister}>Register</span></span>
+          <span>
+            Don't have an account?{" "}
+            <span className="Link-Text" onClick={linkToRegister}>
+              Register
+            </span>
+          </span>
         </div>
       </div>
     </div>
